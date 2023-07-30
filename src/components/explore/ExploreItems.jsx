@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import Countdown from "../UI/Countdown";
 
 const ExploreItems = () => {
   const [exploreItems, setExploreItems] = useState([]);
@@ -41,7 +42,9 @@ const ExploreItems = () => {
                 <i className="fa fa-check"></i>
               </Link>
             </div>
-            <div className="de_countdown">5h 30m 32s</div>
+            {exploreItem.expiryDate && (
+              <Countdown expiryDate={exploreItem.expiryDate} />
+            )}
             <div className="nft__item_wrap">
               <div className="nft__item_extra">
                 <div className="nft__item_buttons">
