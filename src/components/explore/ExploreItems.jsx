@@ -8,7 +8,15 @@ import Skeleton from "react-loading-skeleton";
 
 const ExploreItems = () => {
   const [exploreItems, setExploreItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState();
+
+  const maxImagePerRow = 4;
+
+  const [next, setNext] = useState(8);
+
+  const handleLoadMore = () => {
+    setNext(next + maxImagePerRow);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -22,18 +30,13 @@ const ExploreItems = () => {
       });
   }, []);
 
-  function filter(value) {
+  async function filter(value) {
     setIsLoading(true);
-    axios
-      .get(
-        `https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?filter=${value}`
-      )
-      .then((res) => {
-        setExploreItems(res.data);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    const { data } = await axios.get(
+      `https://us-central1-nft-cloud-functions.cloudfunctions.net/explore?filter=${value}`
+    );
+    setExploreItems(data);
+    setIsLoading(false);
   }
 
   return (
@@ -107,7 +110,7 @@ const ExploreItems = () => {
               </div>
             </div>
           ))
-        : exploreItems.map((exploreItem, index) => (
+        : exploreItems?.slice(0, next)?.map((exploreItem, index) => (
             <div
               key={index}
               className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
@@ -116,7 +119,7 @@ const ExploreItems = () => {
               <div className="nft__item">
                 <div className="author_list_pp">
                   <Link
-                    to="/author"
+                    to="/author/${exploreItem.authorId}"
                     data-bs-toggle="tooltip"
                     data-bs-placement="top"
                   >
@@ -149,7 +152,7 @@ const ExploreItems = () => {
                       </div>
                     </div>
                   </div>
-                  <Link to="/item-details">
+                  <Link to="/item-details/${exploreItems?.nftId}">
                     <img
                       src={exploreItem.nftImage}
                       className="lazy nft__item_preview"
@@ -171,9 +174,16 @@ const ExploreItems = () => {
             </div>
           ))}
       <div className="col-md-12 text-center">
-        <Link to="" id="loadmore" className="btn-main lead">
-          Load more
-        </Link>
+        {next < exploreItems?.length && (
+          <Link
+            to=""
+            id="loadmore"
+            className="btn-main lead"
+            onClick={handleLoadMore}
+          >
+            Load more
+          </Link>
+        )}
       </div>
     </>
   );
