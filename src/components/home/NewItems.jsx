@@ -119,7 +119,7 @@ const NewItems = () => {
                 <div className="nft__item" key={index}>
                   <div className="author_list_pp">
                     <Link
-                      to="/author"
+                      to={`/author/${newItems.authorId}`}
                       data-bs-toggle="tooltip"
                       data-bs-placement="top"
                       title={items.title}
